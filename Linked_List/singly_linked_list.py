@@ -85,21 +85,58 @@ class SinglyLinkedList:
         # 一番最後の最後のノードをreturnしている 例:この場合だと30
         self.head = _reverse_recursive(self.head, None)
 
+    # 連続した偶数のみreverseを実行する
+    # 1 -> 8 -> 6 -> 4 -> 9
+    # 4 -> 6 -> 8 => 8 -> 6 -> 4
+    # start.next = nodeについて
+    # start.nextは偶数の始まりの次の値この場合は4の次の値に連続して偶数ではなかった（この場合は9）が選ばれる
+
+    # return prevについて
+    # 偶数の終わりの部分(ここだと8)が先頭になるからnodeが偶数でなくなった時の一つ前であるprevを返してあげる
+
+    # 連続した偶数の前の値(ここでだと1の次の値が)reverse_evenされて一番前になった(ここだと8の値が)node.nextになる
+    # node.next = _reverse_even(node.next, node)
+    def reverse_even(self):
+        def _reverse_even(node, prev):
+            if not node:
+                return None
+
+            if node.data % 2 == 0:  # 偶数部分の開始
+                start = node
+                while node and node.data % 2 == 0:  # 偶数部分を反転
+                    next_node = node.next
+                    node.next = prev
+                    prev, node = node, next_node
+                start.next = node  # 反転した偶数部分の終わりを接続
+                return prev  # 偶数部分の新しい先頭を返す
+            else:
+                node.next = _reverse_even(node.next, node)
+                return node
+
+        self.head = _reverse_even(self.head, None)
+
 
 linked_list = SinglyLinkedList()
+linked_list.append(1)
+linked_list.append(4)
+linked_list.append(6)
+linked_list.append(8)
+linked_list.append(9)
 linked_list.append(10)
-linked_list.append(20)
-linked_list.append(30)
-linked_list.prepend(5)
+linked_list.append(12)
 
 
 # linked_list.display()  # 予想出力: 5 -> 10 -> 20 -> 30 -> None
 
-linked_list.reverse_recursive()
-linked_list.display()  # 予想出力: 30 -> 20 -> 10 -> 5 -> None
+# linked_list.reverse_recursive()
+# linked_list.display()  # 予想出力: 30 -> 20 -> 10 -> 5 -> None
 
 # linked_list.reverse()
 # linked_list.display()  # 予想出力: 30 -> 20 -> 10 -> 5 -> None
 
 # linked_list.delete(20)
 # linked_list.display()  # 予想出力: 5 -> 10 -> 30 -> None
+
+linked_list.display()  # 予想出力: 1 -> 4 -> 6 -> 8 -> 9 -> 10
+linked_list.reverse_even()
+linked_list.display()  # 予想出力: 1 -> 8 -> 6 -> 4 -> 9 -> 10
