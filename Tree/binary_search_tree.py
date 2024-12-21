@@ -66,10 +66,10 @@ class BinarySearchTree:
             self._postorder(node.right, result)
             result.append(node.value)
 
-    def search(self, value: int) -> Node:
+    def search(self, value) -> Node:
         return self._search(self.root, value)
 
-    def _search(self, node: Node, value: int) -> Node:
+    def _search(self, node, value) -> Node:
         if node is None:
             return None
 
@@ -80,24 +80,74 @@ class BinarySearchTree:
         else:
             return self._search(node.left, value)
 
+    def delete(self, value):
+        self.root = self._delete(self.root, value)
+
+    def _delete(self, node, value):
+        if node is None:
+            return node
+
+        if value < node.value:
+            node.left = self._delete(node.left, value)
+        elif value > node.value:
+            node.right = self._delete(node.right, value)
+        else:
+            # ノードが見つかった場合
+            # 片方しかnodeがないパターン
+            if node.left is None:
+                return node.right
+            elif node.right is None:
+                return node.left
+
+            # 両方nodeがあるパターン
+            # 削除対象ノードより大きい最小値
+            min_larger_node = self.find_min(node.right)
+            node.value = min_larger_node.value
+            node.right = self._delete(node.right, min_larger_node.value)
+        return node
+
+    # 部分木の最小ノードを探す
+    def find_min(self, node):
+        current = node
+        while current.left is not None:
+            current = current.left
+        return current
+
 
 if __name__ == "__main__":
-    bst = BinarySearchTree()
-    bst.insert(4)
-    bst.insert(2)
-    bst.insert(6)
-    bst.insert(1)
-    bst.insert(3)
-    bst.insert(7)
-    print(bst.inorder())
-    print(bst.preorder())
-    print(bst.postorder())
+    # bst = BinarySearchTree()
+    # bst.insert(4)
+    # bst.insert(2)
+    # bst.insert(6)
+    # bst.insert(1)
+    # bst.insert(3)
+    # bst.insert(7)
+    # print(bst.inorder())
+    # print(bst.preorder())
+    # print(bst.postorder())
 
-    # 検索テスト
-    test_values = [7, 15, 8]
-    for test_value in test_values:
-        result = bst.search(test_value)
-        if result:
-            print(f"値 {test_value} が見つかりました: ノードの値 = {result.value}")
-        else:
-            print(f"値 {test_value} は見つかりませんでした。")
+    # # 検索テスト
+    # test_values = [7, 15, 8]
+    # for test_value in test_values:
+    #     result = bst.search(test_value)
+    #     if result:
+    #         print(f"値 {test_value} が見つかりました: ノードの値 = {result.value}")
+    #     else:
+    #         print(f"値 {test_value} は見つかりませんでした。")
+
+    # ノードを挿入
+    bst = BinarySearchTree()
+    for value in [10, 5, 15, 3, 7, 12, 20]:
+        bst.insert(value)
+
+    print("削除前の中間順巡回:", bst.inorder())
+
+    # テストケース: ノードを削除
+    bst.delete(3)  # 葉ノードの削除
+    print("3を削除後の中間順巡回:", bst.inorder())
+
+    bst.delete(15)  # 1つの子を持つノードの削除
+    print("15を削除後の中間順巡回:", bst.inorder())
+
+    bst.delete(10)  # 2つの子を持つノードの削除
+    print("10を削除後の中間順巡回:", bst.inorder())
