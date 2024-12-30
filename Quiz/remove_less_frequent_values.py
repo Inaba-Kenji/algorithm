@@ -3,10 +3,12 @@
 
 
 from collections import Counter
-from typing import List
+from typing import List, Tuple
 
 
-def remove_less_frequent_values(x: List[int], y: List[int]):
+def remove_less_frequent_values(
+    x: List[int], y: List[int]
+) -> Tuple[List[int], List[int]]:
     counter_x = Counter(x)
     counter_y = Counter(y)
 
